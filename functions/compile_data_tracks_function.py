@@ -54,6 +54,9 @@ def compile_data_tracks(treatment, min_track_length, region):
         tracks_geo[i]['vy'] = tracks_geo[i]['dy_smooth3'].rolling(2).mean().shift(-1)
         tracks_geo[i]['v'] = ( tracks_geo[i]['vx']**2 + tracks_geo[i]['vy']**2 )**0.5
 
+        #get smoothed polarity angle
+        tracks_geo[i]['smooth_polarity_angle'] = tracks_geo[i]['polarity_angle'].rolling(5,center=True).mean()
+
         tracks_geo[i]['velangle_smooth3']=np.arctan2(tracks_geo[i]['vy'], tracks_geo[i]['vx'] ) 
         
         tracks_geo[i]['polarity_turn'] =  tracks_geo[i]['polarity_angle'].diff()
