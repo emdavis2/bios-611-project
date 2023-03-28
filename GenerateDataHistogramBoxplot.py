@@ -34,6 +34,13 @@ elif region1 == 'stiff':
 
 sampling_t = 10 #min per frame
 
+#functions for distributions
+def exp_func(lamb,x):
+  return lamb*np.exp(-lamb*x)
+
+def norm_func(std_dev,x):
+  return (1/(std_dev*np.sqrt(2*np.pi))) * np.exp(-0.5*((x/std_dev)**2))
+
 #clears out sentinel file if it exists
 open('sentinels/histogram_boxplot.txt','w').close()
 #create new sentinel file to write to
@@ -192,8 +199,11 @@ for i in range(len(tracks_geo_region1)):
   dx_region1.append(tracks_geo_region1[i]['dx'].dropna())
   dy_region1.append(tracks_geo_region1[i]['dy'].dropna())
 
-dx_region1 = (np.concatenate(dx_region1).ravel())/sampling_t
-dy_region1 = (np.concatenate(dy_region1).ravel())/sampling_t
+dx_region1_fit = (np.concatenate(dx_region1).ravel())
+dy_region1_fit = (np.concatenate(dy_region1).ravel())
+
+dx_region1 = dx_region1_fit/sampling_t #(np.concatenate(dx_region1).ravel())/sampling_t
+dy_region1 = dy_region1_fit/sampling_t #(np.concatenate(dy_region1).ravel())/sampling_t
 
 dx_dy_region1 = np.concatenate((dx_region1,dy_region1))
 
@@ -209,11 +219,36 @@ plt.savefig('figures/histogram_boxplot/dx_hist_{}.png'.format(region1))
 plt.clf()
 file_lines.append('figures/histogram_boxplot/dx_hist_{}.png \n'.format(region1))
 
+x_e = np.linspace(0,20,1000)
+x_n = np.linspace(-20,20,2000)
+
+plt.hist(dx_region1_fit,bins=50,density=True)
+plt.plot(x_e, exp_func((1/3),x_e),color='red',label='Exponential')
+plt.plot(-1*x_e, exp_func((1/3),x_e),color='red')
+plt.plot(x_n,norm_func(2,x_n),color='black',label='Normal')
+plt.ylim(0,0.3)
+plt.title(r'dx ($\mu m$/10 min) {}'.format(region1_name))
+plt.legend()
+plt.savefig('figures/histogram_boxplot/dx_hist_fit_{}.png'.format(region1))
+plt.clf()
+file_lines.append('figures/histogram_boxplot/dx_hist_fit_{}.png \n'.format(region1))
+
 plt.hist(dy_region1,bins=50)
 plt.title(r'dy ($\mu m$/min) {}'.format(region1_name))
 plt.savefig('figures/histogram_boxplot/dy_hist_{}.png'.format(region1))
 plt.clf()
 file_lines.append('figures/histogram_boxplot/dy_hist_{}.png \n'.format(region1))
+
+plt.hist(dy_region1_fit,bins=50,density=True)
+plt.plot(x_e, exp_func((1/3),x_e),color='red',label='Exponential')
+plt.plot(-1*x_e, exp_func((1/3),x_e),color='red')
+plt.plot(x_n,norm_func(2,x_n),color='black',label='Normal')
+plt.ylim(0,0.3)
+plt.title(r'dy ($\mu m$/10 min) {}'.format(region1_name))
+plt.legend()
+plt.savefig('figures/histogram_boxplot/dy_hist_fit_{}.png'.format(region1))
+plt.clf()
+file_lines.append('figures/histogram_boxplot/dy_hist_fit_{}.png \n'.format(region1))
 
 dx_region2 = []
 dy_region2 = []
@@ -221,8 +256,11 @@ for i in range(len(tracks_geo_region2)):
   dx_region2.append(tracks_geo_region2[i]['dx'].dropna())
   dy_region2.append(tracks_geo_region2[i]['dy'].dropna())
 
-dx_region2 = (np.concatenate(dx_region2).ravel())/sampling_t
-dy_region2 = (np.concatenate(dy_region2).ravel())/sampling_t
+dx_region2_fit = (np.concatenate(dx_region2).ravel())
+dy_region2_fit = (np.concatenate(dy_region2).ravel())
+
+dx_region2 = dx_region2_fit/sampling_t #(np.concatenate(dx_region2).ravel())/sampling_t
+dy_region2 = dy_region2_fit/sampling_t #(np.concatenate(dy_region2).ravel())/sampling_t
 
 dx_dy_region2 = np.concatenate((dx_region2,dy_region2))
 
@@ -238,11 +276,33 @@ plt.savefig('figures/histogram_boxplot/dx_hist_{}.png'.format(region2))
 plt.clf()
 file_lines.append('figures/histogram_boxplot/dx_hist_{}.png \n'.format(region2))
 
+plt.hist(dx_region2_fit,bins=50,density=True)
+plt.plot(x_e, exp_func((1/3),x_e),color='red',label='Exponential')
+plt.plot(-1*x_e, exp_func((1/3),x_e),color='red')
+plt.plot(x_n,norm_func(2,x_n),color='black',label='Normal')
+plt.ylim(0,0.3)
+plt.title(r'dx ($\mu m$/10 min) {}'.format(region2_name))
+plt.legend()
+plt.savefig('figures/histogram_boxplot/dx_hist_fit_{}.png'.format(region2))
+plt.clf()
+file_lines.append('figures/histogram_boxplot/dx_hist_fit_{}.png \n'.format(region2))
+
 plt.hist(dy_region2,bins=50)
 plt.title(r'dy ($\mu m$/min) {}'.format(region2_name))
 plt.savefig('figures/histogram_boxplot/dy_hist_{}.png'.format(region2))
 plt.clf()
 file_lines.append('figures/histogram_boxplot/dy_hist_{}.png \n'.format(region2))
+
+plt.hist(dy_region2_fit,bins=50,density=True)
+plt.plot(x_e, exp_func((1/3),x_e),color='red',label='Exponential')
+plt.plot(-1*x_e, exp_func((1/3),x_e),color='red')
+plt.plot(x_n,norm_func(2,x_n),color='black',label='Normal')
+plt.ylim(0,0.3)
+plt.title(r'dy ($\mu m$/10 min) {}'.format(region2_name))
+plt.legend()
+plt.savefig('figures/histogram_boxplot/dy_hist_fit_{}.png'.format(region2))
+plt.clf()
+file_lines.append('figures/histogram_boxplot/dy_hist_fit_{}.png \n'.format(region2))
 
 #Get solidity
 solidity_region1 = []
