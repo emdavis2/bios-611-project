@@ -277,11 +277,11 @@ all_ac_pos = []
 all_ac_neg = []
 for df in tracks_geo_region:
   track=df
-  cospol = list( track[['smooth_abs-skew']].iloc[:,0] * np.cos(track[['smooth_polarity_angle']].iloc[:,0]) )
-  sinpol = list( track[['smooth_abs-skew']].iloc[:,0] * np.sin(track[['smooth_polarity_angle']].iloc[:,0]) ) 
+  cospol = list( np.cos(track[['polarity_angle']].iloc[:,0]) )
+  sinpol = list( np.sin(track[['polarity_angle']].iloc[:,0]) ) 
   normvect = pd.DataFrame( {'cospol': cospol , 'sinpol':sinpol })
   combined = pd.concat([track[['vx','vy']].reset_index(drop=True), normvect.reset_index(drop=True)], axis = 1 )
-  poslagsmean, Nposlags, neglagsmean, Nneglags = xcorr_vector(combined, min_track_length)
+  poslagsmean, Nposlags, neglagsmean, Nneglags = xcorr_direction(combined, min_track_length)
 
   #remove nans here
   poslagsmean[np.isnan(poslagsmean)] = 0
@@ -294,17 +294,17 @@ for df in tracks_geo_region:
 poslagaverage /= len(tracks_geo_region) #Nposlagtotal 
 neglagaverage /= len(tracks_geo_region)
 
-# std_err_pos = np.std(all_ac_pos,axis=0,ddof=1)/np.sqrt(np.shape(all_ac_pos)[0])
-# std_err_neg = np.std(all_ac_neg,axis=0,ddof=1)/np.sqrt(np.shape(all_ac_neg)[0])
+std_err_pos = np.std(all_ac_pos,axis=0,ddof=1)/np.sqrt(np.shape(all_ac_pos)[0])
+std_err_neg = np.std(all_ac_neg,axis=0,ddof=1)/np.sqrt(np.shape(all_ac_neg)[0])
 
-plt.plot(poslagaverage,label = "positive lag")
-plt.plot(neglagaverage,label='negative lag')
+#plt.plot(poslagaverage,label = "positive lag")
 plt.hlines(y=0,xmin=0,xmax=100,color='k')
 plt.xlim(0,min_track_length-4)
 #plt.ylim(-0.5,1)
-# plt.errorbar(np.arange(0,min_track_length-4),poslagaverage[0:min_track_length-4],yerr=std_err_pos,label='pos lag')
-# plt.errorbar(np.arange(0,min_track_length-4),neglagaverage[0:min_track_length-4],yerr=std_err_neg,label='neg lag')
+plt.errorbar(np.arange(0,min_track_length-4),poslagaverage[0:min_track_length-4],yerr=std_err_pos,label='pos lag')
+plt.errorbar(np.arange(0,min_track_length-4),neglagaverage[0:min_track_length-4],yerr=std_err_neg,label='neg lag')
 plt.xlabel('lag (10 min)')
+plt.legend()
 plt.title("Cross correlation velocity and polarity vectors {}".format(region_name))
 plt.savefig('figures/acf_figures/{}_vel_pol_crosscorr_avg.png'.format(region))
 plt.clf()
