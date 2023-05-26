@@ -23,6 +23,7 @@ clean:
 	mkdir -p figures/MSD_model
 	mkdir -p figures/velacf_hetero_model
 	mkdir -p figures/MSD_hetero_model
+	mkdir -p figures/cellshape_histogram
 	mkdir -p sentinels
 	touch .created-dirs
 
@@ -46,6 +47,13 @@ sentinels/histogram_boxplot.txt: .created-dirs celltrack_data/gel_data\
  functions/libraries/track_functions.py functions/libraries/qc_functions.py\
  functions/libraries/filter_cells_fns.py functions/libraries/centers.py
 	python3.7 GenerateDataHistogramBoxplot.py 'celltrack_data/glass_data' 'celltrack_data/gel_data' 30 'glass' 'stiff'
+
+# Create the boxplot and histogram figures for both glass and gel data
+sentinels/cellshape_histogram.txt: .created-dirs celltrack_data/gel_data\
+ celltrack_data/glass_data functions/compile_data_tracks_function.py\
+ functions/libraries/track_functions.py functions/libraries/qc_functions.py\
+ functions/libraries/filter_cells_fns.py functions/libraries/centers.py
+	python3.7 CellShapeOverTrack.py 'celltrack_data/glass_data' 'celltrack_data/gel_data' 30 'glass' 'stiff'
 
 #Perform grid search to fit PRW model to glass data with vel acf
 model/model_params_glass_LPRW_vel_acf.txt: .created-dirs celltrack_data/glass_data functions/compile_data_tracks_function.py\
